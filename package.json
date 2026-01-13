@@ -13,25 +13,37 @@
   "build": {
     "appId": "com.manthan.pdfmaster",
     "productName": "PDF Master Tool",
+    "directories": {
+      "output": "dist"
+    },
     "files": [
       "main.js",
-      "Pro_PDF_Manager.html",
-      "lib/**/*"
+      "src/**/*",
+      "node_modules/pdf-lib/**/*",
+      "node_modules/sortablejs/**/*"
     ],
     "mac": {
       "target": "dmg",
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": "nsis"
+      "target": "portable"
     },
     "linux": {
       "target": "AppImage"
     }
   },
-  "keywords": ["pdf", "merge", "electron"],
-  "author": "",
+  "keywords": [
+    "pdf",
+    "merge",
+    "electron"
+  ],
+  "author": "Manthan Ruparelia & Associates",
   "license": "ISC",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "sortablejs": "^1.15.6"
+  },
   "devDependencies": {
     "electron": "^39.2.7",
     "electron-builder": "^26.4.0"
