@@ -6,59 +6,12 @@ on:
       - main
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Get current version
-        id: package-version
-        shell: bash
-        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-      - name: Build Electron app
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            npm run build:win
-          else
-            npm run build:mac
-          fi
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-${{ matrix.os }}
-          path: |
-            release/*.exe
-            release/*.dmg
-          if-no-files-found: ignore
-
-  create-release:
-    needs: release
+  bump-version:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      new_version: ${{ steps.bump-version.outputs.new_version }}
 
     steps:
       - name: Checkout code
@@ -98,6 +51,61 @@ jobs:
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
+  release:
+    needs: bump-version
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull latest changes
+        run: git pull origin main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Electron app
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            npm run build:win
+          else
+            npm run build:mac
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+          if-no-files-found: ignore
+
+  create-release:
+    needs: [bump-version, release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -110,14 +118,14 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.bump-version.outputs.new_version }}
-          name: Release v${{ steps.bump-version.outputs.new_version }}
+          tag_name: v${{ needs.bump-version.outputs.new_version }}
+          name: Release v${{ needs.bump-version.outputs.new_version }}
           body: |
-            ## PDF Master Tool v${{ steps.bump-version.outputs.new_version }}
+            ## PDF Master Tool v${{ needs.bump-version.outputs.new_version }}
 
             ### Downloads
-            - **Windows (x64)**: `PDF Master Tool-*-win.exe` (Portable - no installation required)
-            - **macOS (Apple Silicon)**: `PDF Master Tool-*-mac.dmg`
+            - **Windows (x64)**: `PDF Master Tool-${{ needs.bump-version.outputs.new_version }}-win.exe` (Portable - no installation required)
+            - **macOS (Apple Silicon)**: `PDF Master Tool-${{ needs.bump-version.outputs.new_version }}-mac.dmg`
 
             ### Features
             - Merge multiple PDFs
