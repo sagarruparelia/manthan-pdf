@@ -3,6 +3,7 @@
   --secondary: #64748b;
   --success: #16a34a;
   --danger: #dc2626;
+  --warning: #ea580c;
   --bg: #f8fafc;
   --text: #1e293b;
   --border: #e2e8f0;
@@ -102,6 +103,7 @@ body {
 .form-group label {
   font-size: 13px;
   color: var(--secondary);
+  display: block;
 }
 
 .form-group input[type="text"] {
@@ -119,20 +121,36 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* Drop Zone */
+.drop-zone {
+  margin: 20px 0;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.drop-zone.drag-over {
+  border-color: var(--primary);
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.drop-zone.drag-over .file-list-empty {
+  color: var(--primary);
+  font-weight: 600;
+}
+
 /* File List */
 .file-list {
   list-style: none;
   padding: 0;
-  margin: 20px 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
   overflow: hidden;
   min-height: 100px;
 }
 
-.file-list:empty::after {
-  content: 'No files added. Click "Add PDF Files" to get started.';
-  display: block;
+.file-list-empty {
   padding: 40px;
   text-align: center;
   color: var(--secondary);
@@ -187,6 +205,8 @@ body {
   font-weight: bold;
   padding: 5px 10px;
   border-radius: 4px;
+  border: none;
+  background: none;
   transition: background-color 0.15s ease;
 }
 
@@ -219,6 +239,11 @@ body {
   transform: scale(0.98);
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-primary {
   background: var(--primary);
   color: white;
@@ -240,20 +265,19 @@ body {
 }
 
 .btn-warning {
-  background: #ea580c;
+  background: var(--warning);
   color: white;
-}
-
-.btn[hidden] {
-  display: none;
 }
 
 /* Status Message */
 .status {
   margin: 15px 0;
   font-weight: bold;
-  color: var(--primary);
   min-height: 24px;
+}
+
+.status.processing {
+  color: var(--primary);
 }
 
 .status.success {

@@ -2,33 +2,43 @@
   "name": "pdf-master-tool",
   "version": "1.0.1",
   "description": "PDF Merge & Sequence Manager - Drag, Sort, Merge PDFs offline",
-  "main": "main.js",
+  "main": "dist-electron/main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux"
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "build:win": "vite build && electron-builder --win",
+    "build:mac": "vite build && electron-builder --mac",
+    "build:linux": "vite build && electron-builder --linux",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\""
   },
   "build": {
     "appId": "com.manthan.pdfmaster",
     "productName": "PDF Master Tool",
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "${productName}-${version}-${os}.${ext}",
+    "icon": "src/assets/icon.png",
     "directories": {
-      "output": "dist"
+      "output": "release"
     },
     "files": [
-      "main.js",
-      "src/**/*",
-      "node_modules/pdf-lib/**/*",
-      "node_modules/sortablejs/**/*"
+      "dist/**/*",
+      "dist-electron/**/*",
+      "src/assets/icon.png"
     ],
     "mac": {
-      "target": "dmg",
+      "target": {
+        "target": "dmg",
+        "arch": ["arm64"]
+      },
+      "icon": "src/assets/icon.png",
       "category": "public.app-category.productivity"
     },
     "win": {
-      "target": "portable"
+      "target": {
+        "target": "portable",
+        "arch": ["x64"]
+      },
+      "icon": "src/assets/icon.png"
     },
     "linux": {
       "target": "AppImage"
@@ -41,16 +51,31 @@
   "keywords": [
     "pdf",
     "merge",
-    "electron"
+    "electron",
+    "react"
   ],
   "author": "Manthan Ruparelia & Associates",
   "license": "ISC",
   "dependencies": {
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.7.3",
     "pdf-lib": "^1.17.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "sortablejs": "^1.15.6"
   },
   "devDependencies": {
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@types/sortablejs": "^1.15.8",
+    "@vitejs/plugin-react": "^4.5.2",
+    "concurrently": "^9.1.2",
     "electron": "^39.2.7",
-    "electron-builder": "^26.4.0"
+    "electron-builder": "^26.4.0",
+    "sharp": "^0.34.5",
+    "vite": "^6.3.5",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "wait-on": "^8.0.3"
   }
 }

@@ -50,8 +50,8 @@ jobs:
         with:
           name: release-${{ matrix.os }}
           path: |
-            dist/*.exe
-            dist/*.dmg
+            release/*.exe
+            release/*.dmg
           if-no-files-found: ignore
 
   create-release:
@@ -116,14 +116,17 @@ jobs:
             ## PDF Master Tool v${{ steps.bump-version.outputs.new_version }}
 
             ### Downloads
-            - **Windows**: `PDF.Master.Tool.*.exe` (Portable - no installation required)
-            - **macOS**: `PDF.Master.Tool.*.dmg`
+            - **Windows (x64)**: `PDF Master Tool-*-win.exe` (Portable - no installation required)
+            - **macOS (Apple Silicon)**: `PDF Master Tool-*-mac.dmg`
 
             ### Features
             - Merge multiple PDFs
             - Auto page numbering
             - Add watermarks
             - Export index to CSV/Excel
+            - Native file dialogs
+            - Drag & drop PDF files
+            - Auto-updates
 
             ---
             *Manthan Ruparelia & Associates - Chartered Accountants*
