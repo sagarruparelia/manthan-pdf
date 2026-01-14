@@ -20,7 +20,7 @@ export function usePdfMerger() {
       for (let i = 0; i < files.length; i++) {
         const { file } = files[i];
         const arrayBuffer = await file.arrayBuffer();
-        const pdf = await PDFDocument.load(arrayBuffer);
+        const pdf = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
         const pageCount = pdf.getPageCount();
 
         const copiedPages = await pdfDoc.copyPages(pdf, pdf.getPageIndices());
