@@ -1,6 +1,6 @@
 {
   "name": "pdf-master-tool",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "PDF Merge & Sequence Manager - Drag, Sort, Merge PDFs offline",
   "main": "dist-electron/main.js",
   "scripts": {
